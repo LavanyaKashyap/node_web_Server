@@ -17,9 +17,9 @@ app.use((req,res,next)=>{    //MIDDLEWARE WHICH logs the request
 next();
 })
 
-app.use((req,res,next)=>{
-    res.render('maintainence.hbs');    //add only when site is in maitaninace mode to stop the site from hitting anything furthur maintaineance middleware 
-})
+// app.use((req,res,next)=>{
+//     res.render('maintainence.hbs');    //add only when site is in maitaninace mode to stop the site from hitting anything furthur maintaineance middleware 
+// })
 
 app.use(express.static(__dirname+'/public'))  //give access to this folder , localhost:3000 = __dirname+'/public' // static middleware which servers up a directory
 //static middleware should be after other middleware 
