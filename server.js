@@ -1,19 +1,29 @@
 const express = require('express');
 const hbs = require('hbs');
+const fs = require('fs');
 
+const port = process.env.PORT || 3021
 var app = express();
 hbs.registerPartials(__dirname+'/views/partials') //register partials folders
 app.set('view engine' , 'hbs'); //set the view engine to hbs
-app.use(express.static(__dirname+'/public'))  //give access to this folder , localhost:3000 = __dirname+'/public' // static middleware which servers up a directory
 app.use((req,res,next)=>{    //MIDDLEWARE WHICH logs the request 
-    var todayDate = new Date().toString;
-    console.log(` ${todayDate} : ${req.method} : ${req.url}`);
+    var now = new Date();
+    var message = `${now} : ${req.method} : ${req.url}`;
+    fs.appendFileSync('server.log' , message+'\n' , (err)=>{
+        if(err){
+            console.log(`Error while appending file sync ${err}`)
+        }
+    });
 next();
 })
 
-app.listen(3000 , ()=>{
-    console.log('Server started at : ');
-});
+app.use((req,res,next)=>{
+    res.render('maintainence.hbs');    //add only when site is in maitaninace mode to stop the site from hitting anything furthur maintaineance middleware 
+})
+
+app.use(express.static(__dirname+'/public'))  //give access to this folder , localhost:3000 = __dirname+'/public' // static middleware which servers up a directory
+//static middleware should be after other middleware 
+
 
 hbs.registerHelper('getcurrentYear' , ()=>{
     return new Date().getFullYear()
@@ -40,3 +50,7 @@ app.get('/aboutJsonResponse' , (req,res)=>{
         likes : ["hello", "bye"]
     });
 })
+
+app.listen(port , ()=>{
+    console.log(`Server started at : ${port}`);
+});
